@@ -1,1 +1,18 @@
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 ~
+$ cd C:
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c
+$ ncs folder.
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi
+$ cd v2.6.0
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi/v2.6.0
+$ cd nrf
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi/v2.6.0/nrf ((v2.6.0))
+$ cd applications
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi/v2.6.0/nrf/applications ((v2.6.0))
+$ cd nrf5340_audio
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi/v2.6.0/nrf/applications/nrf5340_audio ((v2.6.0))
+$ cd tools
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi/v2.6.0/nrf/applications/nrf5340_audio/tools ((v2.6.0))
+$ cd buildprog
+Communication Lab 22@DESKTOP-0AQ27MM MINGW64 /c/NordicSemi/v2.6.0/nrf/applications/nrf5340_audio/tools/buildprog ((v2.6.0))
 
