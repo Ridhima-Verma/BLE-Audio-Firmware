@@ -1,0 +1,5 @@
+python buildprog.py -c both -b debug -d headset -p –f
+
+ "nrf5340_audio_dk_snr": 1050118198,
+        "nrf5340_audio_dk_dev": "headset",
+        "channel": "left
