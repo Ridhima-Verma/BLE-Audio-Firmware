@@ -1,1 +1,19 @@
+These parameters are set via Kconfig options in nrf/applications/nrf5340_audio
+
+Extended/periodic advertising:
+
+nrf/applications/nrf5340_audio/src/bluetooth/bt_management/advertising/Kconfig
+
+Sample Rate:
+
+nrf/applications/nrf5340_audio/src/bluetooth/Kconfig
+
+Bitrate:
+
+nrf/applications/nrf5340_audio/src/bluetooth/bt_stream/broadcast/Kconfig
+
+Bitdepth:
+
+C:\NCSsemi\v2.6.0\nrf\applications\nrf5340_audio\src\audio
+
 
