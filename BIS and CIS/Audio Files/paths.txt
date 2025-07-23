@@ -1,0 +1,20 @@
+
+
+Serial number
+C:\NCSsemi\v2.6.0\nrf\applications\nrf5340_audio\tools\buildprog\nrf5340_audio_dk_devices.json
+json
+
+
+Hex files
+C:\NCSsemi\v2.6.0\nrf\applications\nrf5340_audio\build\dev_headset\build_debug\zephyr
+
+dev_gateway
+merged domain.hex
+
+
+dev_headset
+merged domain.hex
+
+mic enable
+
+C:\NCSsemi\v2.6.0\nrf\applications\nrf5340_audio\src\modules
