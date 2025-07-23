@@ -5,7 +5,7 @@ Bluetooth LE Audio modes of audio data transfer: Broadcast Isochronous Streams (
 Dynamic Mode switching.
 
 Hardware: nRF5340 audio source, sink node, SD card.
-Firmware: ncs 2.6.0 SDK and Zephyr RTOS.
+Firmware: ncs 2.6.0 SDK and Zephyr Real-Time Operating System (RTOS).
 
 
 
