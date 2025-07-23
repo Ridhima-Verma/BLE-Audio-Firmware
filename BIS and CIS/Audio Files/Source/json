@@ -1,1 +1,12 @@
+nrf\applications\nrf5340_audio\tools\buildprog
 
+nrf5340_audio_dk_devices.json
+nrf5340_audio_dk_snr serial ID
+Cdnrf5340_audio_dk_dev gateway
+
+Audio Source:
+python buildprog.py -c both -b debug -d gateway -p –f Blue LED blinks
+ 
+        "nrf5340_audio_dk_snr": 1050133272,
+        "nrf5340_audio_dk_dev": "gateway",
+        "channel": "NA"
