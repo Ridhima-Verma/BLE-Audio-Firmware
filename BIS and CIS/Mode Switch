@@ -1,1 +1,86 @@
+#include <zephyr/kernel.h>
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/audio/iso.h>
+#include <bluetooth/audio/bap.h>
+#include <pm/pm.h>
+
+#define PDR_THRESHOLD 70 // example threshold in percentage
+#define R_MAX 3
+#define T_SLEEP_MS 60000 // example sleep threshold
+#define DURATION_CIS_GOOD_MS 30000
+
+enum audio_mode {
+    MODE_BIS,
+    MODE_CIS
+};
+
+static enum audio_mode mode = MODE_BIS;
+static int retry_count = 0;
+static int pdr_current = 100;
+static bool audio_active = true;
+
+static void enter_sleep_mode(void) {
+    printk("Entering System-Off Sleep Mode\n");
+    pm_state_force(0, &(struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});
+    k_sleep(K_FOREVER); // Wait for external wakeup
+}
+
+void main(void) {
+    // Initialization
+    int err;
+    err = bt_enable(NULL);
+    if (err) {
+        printk("Bluetooth init failed (err %d)\n", err);
+        return;
+    }
+
+    while (true) {
+        if (mode == MODE_BIS) {
+            // Start BIS stream
+            start_bis_stream();
+
+            // Monitor PDR (simulate or compute)
+            pdr_current = get_current_pdr();
+
+            if (pdr_current < PDR_THRESHOLD) {
+                // Send AUX_SCAN_REQ (simulate with function call)
+                bool source_responded = send_aux_scan_req();
+
+                if (!source_responded) {
+                    retry_count++;
+                } else {
+                    retry_count = 0;
+                }
+
+                if (retry_count >= R_MAX) {
+                    // Switch to CIS
+                    stop_bis_stream();
+                    start_cis_connection();
+                    mode = MODE_CIS;
+                    retry_count = 0;
+                }
+            }
+        } else if (mode == MODE_CIS) {
+            // Stream using CIS
+            start_cis_stream();
+
+            // Monitor PDR for certain duration
+            pdr_current = get_current_pdr();
+            if (pdr_current >= PDR_THRESHOLD) {
+                // Assume condition persists for DURATION_CIS_GOOD_MS
+                k_sleep(K_MSEC(DURATION_CIS_GOOD_MS));
+                mode = MODE_BIS; // Optional switch back
+                stop_cis_stream();
+            }
+        }
+
+        // Check for audio inactivity
+        if (!audio_active_for(T_SLEEP_MS)) {
+            enter_sleep_mode(); // Puts system in OFF mode until external event
+            mode = MODE_BIS;
+        }
+
+        k_sleep(K_SECONDS(1)); // Wait for next sample cycle
+    }
+}
 
