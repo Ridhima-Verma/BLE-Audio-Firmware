@@ -4,9 +4,9 @@
 #include <bluetooth/audio/bap.h>
 #include <pm/pm.h>
 
-#define PDR_THRESHOLD 70 // example threshold in percentage
+#define PDR_THRESHOLD 70
 #define R_MAX 3
-#define T_SLEEP_MS 60000 // example sleep threshold
+#define T_SLEEP_MS 60000
 #define DURATION_CIS_GOOD_MS 30000
 
 enum audio_mode {
@@ -22,65 +22,73 @@ static bool audio_active = true;
 static void enter_sleep_mode(void) {
     printk("Entering System-Off Sleep Mode\n");
     pm_state_force(0, &(struct pm_state_info){PM_STATE_SOFT_OFF, 0, 0});
-    k_sleep(K_FOREVER); // Wait for external wakeup
+    k_sleep(K_FOREVER);
 }
 
 void main(void) {
-    // Initialization
-    int err;
-    err = bt_enable(NULL);
+    int err = bt_enable(NULL);
     if (err) {
         printk("Bluetooth init failed (err %d)\n", err);
         return;
     }
+    printk("Bluetooth init successful\n");
 
     while (true) {
         if (mode == MODE_BIS) {
-            // Start BIS stream
+            printk("Current Mode: BIS\n");
+            printk("Starting BIS broadcast stream...\n");
             start_bis_stream();
+            printk("BIS stream started\n");
 
-            // Monitor PDR (simulate or compute)
             pdr_current = get_current_pdr();
+            printk("Current PDR: %d%%\n", pdr_current);
 
             if (pdr_current < PDR_THRESHOLD) {
-                // Send AUX_SCAN_REQ (simulate with function call)
+                printk("PDR below threshold. Sending AUX_SCAN_REQ...\n");
                 bool source_responded = send_aux_scan_req();
 
                 if (!source_responded) {
                     retry_count++;
+                    printk("No response from source. Retry count: %d\n", retry_count);
                 } else {
                     retry_count = 0;
+                    printk("Source responded. Retry count reset.\n");
                 }
 
                 if (retry_count >= R_MAX) {
-                    // Switch to CIS
+                    printk("Retry limit exceeded. Switching to CIS mode.\n");
                     stop_bis_stream();
+                    printk("BIS stream stopped\n");
                     start_cis_connection();
+                    printk("CIS connection established\n");
                     mode = MODE_CIS;
                     retry_count = 0;
                 }
             }
-        } else if (mode == MODE_CIS) {
-            // Stream using CIS
-            start_cis_stream();
 
-            // Monitor PDR for certain duration
+        } else if (mode == MODE_CIS) {
+            printk("Current Mode: CIS\n");
+            start_cis_stream();
+            printk("CIS stream started\n");
+
             pdr_current = get_current_pdr();
+            printk("Current PDR: %d%%\n", pdr_current);
+
             if (pdr_current >= PDR_THRESHOLD) {
-                // Assume condition persists for DURATION_CIS_GOOD_MS
+                printk("Good PDR detected in CIS. Waiting for stability (%dms)...\n", DURATION_CIS_GOOD_MS);
                 k_sleep(K_MSEC(DURATION_CIS_GOOD_MS));
-                mode = MODE_BIS; // Optional switch back
+                mode = MODE_BIS;
                 stop_cis_stream();
+                printk("CIS stream stopped\n");
             }
         }
 
-        // Check for audio inactivity
         if (!audio_active_for(T_SLEEP_MS)) {
-            enter_sleep_mode(); // Puts system in OFF mode until external event
+            printk("No audio activity detected for %d ms.\n", T_SLEEP_MS);
+            enter_sleep_mode();
             mode = MODE_BIS;
         }
 
-        k_sleep(K_SECONDS(1)); // Wait for next sample cycle
+        k_sleep(K_SECONDS(1));
     }
 }
-
